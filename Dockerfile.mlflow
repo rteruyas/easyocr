@@ -1,0 +1,8 @@
+# Dockerfile for MLflow
+FROM python:3.11
+
+RUN pip install mlflow
+
+EXPOSE 5000
+
+CMD ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000"]

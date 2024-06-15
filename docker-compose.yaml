@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./streamlit_app:/app
+    depends_on:
+      - fastapi
+      - mlflow
+    networks:
+      - skynet
+    container_name: streamlit_container
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./fastapi_app:/app
+    depends_on:
+      - mlflow
+    networks:
+      - skynet
+    container_name: fastapi_container
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow
+    environment:
+      - MLFLOW_TRACKING_URI=http://0.0.0.0:5000
+    networks:
+      - skynet
+    container_name: mlflow_container
+
+networks:
+  skynet:
+    driver: bridge
